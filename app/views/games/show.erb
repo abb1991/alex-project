@@ -1,0 +1,16 @@
+<h1>Game: <%= @game.id %></h1>
+
+<% @players.each do |player|%>
+
+    <p><%= User.find(player.user_id).username %></p>
+    <p><%= player.points %></p>
+
+<% end %>
+
+<h2>Cards</h2>
+
+<% @deck.each do |card|%>
+
+    <p><%= card.value %> of <%= card.suit %></p>
+
+<% end %>
