@@ -1,0 +1,21 @@
+<h1>Game: <%= @game.id %></h1>
+
+<% round = Round.all.where(game_id: @game.id).length %>
+
+<% if round > 0 %>
+    <h2>Round: <%= round %></h2>
+<% end %>
+
+<% if @players.length == 4 %>
+
+    <% @players.each do |player|%>
+
+        <p><%= User.find(player.user_id).username %></p>
+        <p><%= player.points %></p>
+        <p><%= Hand.find_by(player_id: player.id).cards %></p>
+
+
+    <% end %>
+<% end %>
+
+<a href="/rounds/<%= @game.id %>/new">Next Round</a>
