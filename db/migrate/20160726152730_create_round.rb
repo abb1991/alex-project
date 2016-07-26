@@ -1,6 +1,6 @@
-class CreateRound < ActiveRecord::Migration
+  class CreateRound < ActiveRecord::Migration
   def change
-    create_table rounds do |t|
+    create_table :rounds do |t|
       t.belongs_to :game
 
       t.timestamps

@@ -5,6 +5,7 @@ class CreateHand < ActiveRecord::Migration
       t.belongs_to :round
       t.belongs_to :game
 
+      t.timestamps
     end
   end
 end
