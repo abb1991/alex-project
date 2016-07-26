@@ -6,16 +6,17 @@
     <h2>Round: <%= round %></h2>
 <% end %>
 
-<% if @players.length == 4 %>
-
-    <% @players.each do |player|%>
+    <% @players.each do |player| %>
 
         <p><%= User.find(player.user_id).username %></p>
         <p><%= player.points %></p>
-        <p><%= Hand.find_by(player_id: player.id).cards %></p>
 
+        <% cards = Hand.find_by(player_id: player.id).cards %>
+
+        <% cards.each do |card| %>
+        <p> <%= card.value %> of <%= card.suit %> </p>
+        <% end %>
 
     <% end %>
-<% end %>
 
 <a href="/rounds/<%= @game.id %>/new">Next Round</a>
