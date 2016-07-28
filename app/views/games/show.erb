@@ -14,7 +14,7 @@
         <% cards = Hand.find_by(player_id: player.id).cards %>
 
         <% cards.each do |card| %>
-        <p> <%= card.value %> of <%= card.suit %> </p>
+        <p><a href="/play/<%= card.id %>"><%= card.value %> of <%= card.suit %></a></p>
         <% end %>
 
     <% end %>
