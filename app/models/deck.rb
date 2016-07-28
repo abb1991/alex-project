@@ -11,8 +11,8 @@ class Deck < ActiveRecord::Base
 
     4.times do |suit_index|
     suit = suits[suit_index]
-    13.times do |card_index|
-      card = numbers[card_index]
+      13.times do |card_index|
+        card = numbers[card_index]
         if (suit == "Spades" && card == "Queen")
           Card.create(suit: suit, number: card, deck_id: self.id, point_value: 13)
         elsif (suit == "Hearts")
