@@ -35,7 +35,7 @@
 
             <% if @played_cards % 4 == @players.index(player) %>
 
-                <p><a href="/play/<%= card.id %>"><%= card.number %> of <%= card.suit %></a></p>
+                <p><a class="card" href="/play/<%= card.id %>"><%= card.card_pic %></a></p>
 
             <% end %>
 
