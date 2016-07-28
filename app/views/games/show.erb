@@ -9,7 +9,7 @@
 
 <% trick_cards = Card.all.where(trick_id: @trick.id) %>
 
-
+<% trick_cards = trick_cards.sort {|a, b| a.updated_at <=> b.updated_at} %>
 
 <h2>Trick</h2>
 
@@ -24,6 +24,7 @@
     <% @players.each do |player| %>
 
         <p><%= User.find(player.user_id).username %></p>
+
         <p><%= player.total_points %></p>
 
         <% cards = Hand.find_by(player_id: player.id).cards %>
@@ -32,13 +33,20 @@
 
           <% if !card.played %>
 
-            <p><a href="/play/<%= card.id %>"><%= card.number %> of <%= card.suit %></a></p>
+            <% if @played_cards % 4 == @players.index(player) %>
+
+                <p><a href="/play/<%= card.id %>"><%= card.number %> of <%= card.suit %></a></p>
+
+            <% end %>
+
           <% end %>
 
         <% end %>
 
     <% end %>
 
-
+<% if @played_cards == 52 %>
 
 <a href="/rounds/<%= @game.id %>/new">Next Round</a>
+
+<% end %>

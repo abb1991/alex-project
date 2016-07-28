@@ -7,7 +7,10 @@ class Hand < ActiveRecord::Base
   after_save :deal_hand
 
   def deal_hand
-    deck = Deck.find_by(game_id: self.game_id)
+    deck = Deck.find_by(round_id: self.round_id)
+    if deck.nil?
+      deck = Deck.create(game_id: self.game_id, round_id: self.round_id)
+    end
     cards = deck.cards
     13.times do
       begin

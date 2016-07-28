@@ -9,9 +9,11 @@ class Player < ActiveRecord::Base
     points = tricks.map do |trick|
       cards = trick.cards
     end
+    total_points = 0
     points.each do |point_arr|
-      return point_arr.reduce(0) { |sum, card| sum +  card.point_value}
+      total_points += point_arr.reduce(0) { |sum, card| sum +  card.point_value}
     end
+    return total_points
   end
 
 end
