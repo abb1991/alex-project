@@ -1,22 +1,44 @@
 <h1>Game: <%= @game.id %></h1>
+<% round_num = Round.all.where(game_id: @game.id).length %>
 
-<% round = Round.all.where(game_id: @game.id).length %>
+<% if round_num > 0 %>
+    <h2>Round: <%= round_num %></h2>
+<% end %>
 
-<% if round > 0 %>
-    <h2>Round: <%= round %></h2>
+<% if !@trick.nil? %>
+
+<% trick_cards = Card.all.where(trick_id: @trick.id) %>
+
+
+
+<h2>Trick</h2>
+
+<% trick_cards.each do |card| %>
+
+<p><%= card.number %> of <%= card.suit %></p>
+
+<% end %>
+
 <% end %>
 
     <% @players.each do |player| %>
 
         <p><%= User.find(player.user_id).username %></p>
-        <p><%= player.points %></p>
+        <p><%= player.total_points %></p>
 
         <% cards = Hand.find_by(player_id: player.id).cards %>
 
         <% cards.each do |card| %>
-        <p><a href="/play/<%= card.id %>"><%= card.value %> of <%= card.suit %></a></p>
+
+          <% if !card.played %>
+
+            <p><a href="/play/<%= card.id %>"><%= card.number %> of <%= card.suit %></a></p>
+          <% end %>
+
         <% end %>
 
     <% end %>
+
+
 
 <a href="/rounds/<%= @game.id %>/new">Next Round</a>

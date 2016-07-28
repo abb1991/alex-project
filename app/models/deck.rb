@@ -7,12 +7,19 @@ class Deck < ActiveRecord::Base
 
   def make_cards
     suits = ["Clubs", "Diamonds", "Spades", "Hearts"]
-    values = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"]
+    numbers = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"]
+
     4.times do |suit_index|
-      suit = suits[suit_index]
-      13.times do |card_index|
-        card = values[card_index]
-        Card.create(suit: suit, value: card, deck_id: self.id)
+    suit = suits[suit_index]
+    13.times do |card_index|
+      card = numbers[card_index]
+        if (suit == "Spades" && card == "Queen")
+          Card.create(suit: suit, number: card, deck_id: self.id, point_value: 13)
+        elsif (suit == "Hearts")
+          Card.create(suit: suit, number: card, deck_id: self.id, point_value: 1)
+        else
+          Card.create(suit: suit, number: card, deck_id: self.id, point_value: 0)
+        end
       end
     end
   end

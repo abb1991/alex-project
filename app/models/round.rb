@@ -3,4 +3,5 @@ class Round < ActiveRecord::Base
     has_many :hands
     has_one :deck
     has_many :cards, through: :deck
+    has_many :tricks
 end
