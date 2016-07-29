@@ -2,7 +2,7 @@ class Player < ActiveRecord::Base
   belongs_to :user
   belongs_to :game
   belongs_to :deck
-  has_many :cards, through: :game
+  has_many :cards, through: :game, :source => 'Card'
 
   def total_points
     tricks = Trick.all.where(player_id: self.id)

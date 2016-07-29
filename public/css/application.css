@@ -29,6 +29,7 @@ a {
   text-decoration: none;
 }
 
-a:hover {
+a.card:hover {
   color: blue;
+  font-size: 120px;
 }

@@ -11,16 +11,51 @@
 
 <% trick_cards = trick_cards.sort {|a, b| a.updated_at <=> b.updated_at} %>
 
+<!-- display cards of current trick -->
 <h2>Trick</h2>
 
-<% trick_cards.each do |card| %>
+    <% trick_cards.each do |card| %>
 
-<p class="card <%=card.suit.downcase %>"><%= card.card_pic %></p>
+        <p class="card <%=card.suit.downcase %>"><%= card.card_pic %></p>
+
+    <% end %>
 
 <% end %>
 
-<% end %>
+    <!-- find player with two of clubs and rotate array so they lead the first trick -->
+    <% @players.each do |player| %>
 
+    <% cards = Card.all.where(player_id: player.id) %>
+
+        <% cards.each do |card| %>
+
+            <% if card.suit == "Clubs" && card.number == "2" %>
+
+                <% @players = @players.rotate(@players.index(player)) %>
+
+            <% end %>
+
+        <% end %>
+
+    <% end %>
+
+    <!-- rotates player who won previous trick to lead new trick -->
+    <% if @played_cards_total % 4 == 0 %>
+
+        <% player = Player.find(Trick.last(2).first.player_id) %>
+
+        <% @players = @players.rotate(@players.index(player)) %>
+
+    <% end %>
+
+
+    <!-- variables for finding which cards have already been played -->
+    <% played_hearts = Card.all.where(deck_id: @deck.id, played: true, suit: "Hearts") %>
+    <% played_queen_of_spades = Card.all.where(deck_id: @deck.id, played: true, suit: "Spades", number: "Queen") %>
+    <% two_of_clubs =  Card.find_by(deck_id: @deck.id, suit: "Clubs", number: "2") %>
+
+
+    <!-- display players, scores, and hand of player whose turn it is -->
     <% @players.each do |player| %>
 
         <p><%= User.find(player.user_id).username %></p>
@@ -29,13 +64,86 @@
 
         <% cards = Hand.find_by(player_id: player.id).cards %>
 
+        <% cards = cards.sort {|a, b| a.suit <=> b.suit} %>
+
+
+        <!-- determine if a player may lead a heart -->
+        <% @play_different_suit = true %>
+
+        <% cards.each do |card| %>
+
+            <% if !card.played && @trick && @trick.cards.first.suit == card.suit %>
+
+                <% @play_different_suit = false %>
+
+            <% end %>
+
+        <% end %>
+
         <% cards.each do |card| %>
 
           <% if !card.played %>
 
-            <% if @played_cards % 4 == @players.index(player) %>
+            <% if @played_cards_total % 4 == @players.index(player) %>
 
-                <a class="card <%=card.suit.downcase %>" href="/play/<%= card.id %>"><%= card.card_pic %></a>
+                <!-- first card played must be 2 of clubs -->
+                <% if !two_of_clubs.played %>
+
+                    <% if @played_cards_total == 0 && card.suit == "Clubs" && card.number == "2" %>
+
+                        <a class="card <%=card.suit.downcase %>" href="/play/<%= card.id %>"><%= card.card_pic %></a>
+                    <% else %>
+
+                        <p class="card <%=card.suit.downcase %>"><%= card.card_pic %></p>
+
+                    <% end %>
+
+                <!-- once the 2 of clubs has been played -->
+                <% else %>
+
+                    <!-- leading a trick  -->
+                    <% if (!@trick) %>
+
+                        <!-- if a heart or the queen of spades has been played, you may lead a heart -->
+                        <% if (!played_hearts.empty? || !played_queen_of_spades.empty?) %>
+
+                            <a class="card <%=card.suit.downcase %>" href="/play/<%= card.id %>"><%= card.card_pic %></a>
+
+                        <!-- if a heart hasn't been played, then you may not play hearts -->
+                        <% else  %>
+
+                            <% if card.suit == "Hearts" %>
+
+                                <p class="card <%=card.suit.downcase %>"><%= card.card_pic %></p>
+
+                            <% else %>
+
+                                <a class="card <%=card.suit.downcase %>" href="/play/<%= card.id %>"><%= card.card_pic %></a>
+
+                            <% end %>
+
+                        <% end %>
+
+                    <!-- a card has been led, and you must follow suit -->
+                    <% elsif !@play_different_suit %>
+
+                        <% if card.suit == @trick.cards.first.suit %>
+                            <a class="card <%=card.suit.downcase %>" href="/play/<%= card.id %>"><%= card.card_pic %></a>
+
+                        <% else %>
+
+                            <p class="card <%=card.suit.downcase %>"><%= card.card_pic %></p>
+
+                        <% end %>
+
+                    <!-- can't play a card if it's not the same suit as the trick_lead -->
+                    <% else %>
+
+                        <a class="card <%=card.suit.downcase %>" href="/play/<%= card.id %>"><%= card.card_pic %></a>
+
+                    <% end %>
+
+                <% end %>
 
             <% end %>
 
@@ -45,8 +153,9 @@
 
     <% end %>
 
-<% if @played_cards == 52 %>
+<!-- move on the next round if all cards have been played -->
+<% if @played_cards_total == 52 %>
 
-<a href="/rounds/<%= @game.id %>/new">Next Round</a>
+    <a href="/rounds/<%= @game.id %>/new">Next Round</a>
 
 <% end %>
