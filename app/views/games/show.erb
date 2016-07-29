@@ -15,7 +15,7 @@
 
 <% trick_cards.each do |card| %>
 
-<p><%= card.number %> of <%= card.suit %></p>
+<p class="card <%=card.suit.downcase %>"><%= card.card_pic %></p>
 
 <% end %>
 
@@ -35,7 +35,7 @@
 
             <% if @played_cards % 4 == @players.index(player) %>
 
-                <p><a class="card" href="/play/<%= card.id %>"><%= card.card_pic %></a></p>
+                <a class="card <%=card.suit.downcase %>" href="/play/<%= card.id %>"><%= card.card_pic %></a>
 
             <% end %>
 
