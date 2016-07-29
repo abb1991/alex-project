@@ -170,6 +170,9 @@
 
     <% @players.sort! {|a,b| a.total_points <=> b.total_points } %>
 
+    <% @game.winner = @players[0].id %>
+    <% @game.save %>
+
     <h3><%= @players[0].user.username %> is the winner!</h3>
 
     <a href="/games/new">New Game</a>
