@@ -22,6 +22,7 @@
 
 <% end %>
 
+
     <!-- find player with two of clubs and rotate array so they lead the first trick -->
     <% @players.each do |player| %>
 
@@ -40,7 +41,7 @@
     <% end %>
 
     <!-- rotates player who won previous trick to lead new trick -->
-    <% if @played_cards_total % 4 == 0 %>
+    <% if @played_cards_total % 4 == 0 && !@trick.nil? %>
 
         <% player = Player.find(Trick.last(2).first.player_id) %>
 
@@ -153,8 +154,27 @@
 
     <% end %>
 
+
+<!-- determines if a player has exceeded the maximum allowed points for a game -->
+<% @loser = false %>
+
+<% @players.each do |player| %>
+    <% if player.total_points >= 10 %>
+        <% @loser = true %>
+
+    <% end %>
+<% end %>
+
 <!-- move on the next round if all cards have been played -->
-<% if @played_cards_total == 52 %>
+<% if  @loser %>
+
+    <% @players.sort! {|a,b| a.total_points <=> b.total_points } %>
+
+    <h3><%= @players[0].user.username %> is the winner!</h3>
+
+    <a href="/games/new">New Game</a>
+
+<% elsif @played_cards_total == 52 %>
 
     <a href="/rounds/<%= @game.id %>/new">Next Round</a>
 
