@@ -9,10 +9,11 @@ get '/play/:id' do
   @trick = Trick.all.where(round_id: @round.id).last
   card.trick_id = @trick.id
   card.save
-  @played_cards = Card.all.where(deck_id: @deck.id, played: true).length
-  if @played_cards%4 == 0
+  @played_cards_total = Card.all.where(deck_id: @deck.id, played: true).length
+  if @played_cards_total%4 == 0
     @trick.winning_player
-    if @played_cards != 52
+    if @played_cards_total != 52
+      @trick = nil
       Trick.create(round_id: @round.id)
     end
   end

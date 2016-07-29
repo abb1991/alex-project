@@ -17,6 +17,7 @@ class Hand < ActiveRecord::Base
         card = cards.sample
       end until card.hand_id.nil?
       card.hand_id = self.id
+      card.player_id = self.player_id
       card.save
     end
   end

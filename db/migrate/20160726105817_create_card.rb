@@ -9,6 +9,7 @@ class CreateCard < ActiveRecord::Migration
       t.belongs_to :trick
       t.belongs_to :deck
       t.belongs_to :hand
+      t.belongs_to :player
 
       t.timestamps
     end
