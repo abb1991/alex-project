@@ -40,8 +40,9 @@
 
     <% end %>
 
+
     <!-- rotates player who won previous trick to lead new trick -->
-    <% if @played_cards_total % 4 == 0 && !@trick.nil? %>
+    <% if @played_cards_total % 4 == 0 && @played_cards_total > 0 && @trick.nil? %>
 
         <% player = Player.find(Trick.last(2).first.player_id) %>
 
@@ -59,13 +60,15 @@
     <!-- display players, scores, and hand of player whose turn it is -->
     <% @players.each do |player| %>
 
-        <p><%= User.find(player.user_id).username %></p>
+        <p class="player"><font color="<%= player.color %>"><%= User.find(player.user_id).username %></font></p>
 
-        <p><%= player.total_points %></p>
+        <p class="points">Points: <%= player.total_points %></p>
 
         <% cards = Hand.find_by(player_id: player.id).cards %>
 
-        <% cards = cards.sort {|a, b| a.suit <=> b.suit} %>
+
+        <!-- uses the helper method card_order to find the index(which relates to the card's overall position in the deck) for proper ordering of cards by suit and number -->
+        <% cards = cards.sort {|a, b| a.created_at <=> b.created_at} %>
 
 
         <!-- determine if a player may lead a heart -->
@@ -73,7 +76,7 @@
 
         <% cards.each do |card| %>
 
-            <% if !card.played && @trick && @trick.cards.first.suit == card.suit %>
+            <% if !card.played && @trick && trick_cards.first.suit == card.suit %>
 
                 <% @play_different_suit = false %>
 
@@ -128,7 +131,7 @@
                     <!-- a card has been led, and you must follow suit -->
                     <% elsif !@play_different_suit %>
 
-                        <% if card.suit == @trick.cards.first.suit %>
+                        <% if card.suit == trick_cards.first.suit %>
                             <a class="card <%=card.suit.downcase %>" href="/play/<%= card.id %>"><%= card.card_pic %></a>
 
                         <% else %>
@@ -166,7 +169,7 @@
 <% end %>
 
 <!-- move on the next round if all cards have been played -->
-<% if  @loser %>
+<% if @played_cards_total == 52 && @loser %>
 
     <% @players.sort! {|a,b| a.total_points <=> b.total_points } %>
 
