@@ -6,7 +6,7 @@ get '/rounds/:id/new' do
   @players.each do |player|
     Hand.create(player_id: player.id, round_id: @round.id, game_id: @game.id)
   end
-  @deck = @game.decks.last #deck doesn't exist
+  @deck = @game.decks.last
   Trick.create(round_id: @round.id)
   erb :'games/show'
 end

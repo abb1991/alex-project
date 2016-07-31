@@ -3,6 +3,7 @@ class CreatePlayer < ActiveRecord::Migration
     create_table :players do |t|
       t.belongs_to :game
       t.belongs_to :user
+      t.string :color
       t.integer :points, default: 0
 
       t.timestamps
